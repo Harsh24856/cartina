@@ -1,0 +1,29 @@
+.contact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.github-icon {
+  color: #333;
+  transition: color 0.3s ease;
+  margin-left: 20px;
+}
+
+.github-icon:hover {
+  color: #4078c0;
+}
+
+.linkedin-icon {
+  color: #333;
+  transition: color 0.3s ease;
+  
+  margin-left: 20px;
+}
+
+.linkedin-icon:hover {
+  color: #0077B5;
+}

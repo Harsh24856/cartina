@@ -1,0 +1,94 @@
+.container2 {
+    display: flex;
+    justify-content: center;
+    padding-top: 10vh;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(
+        45deg,
+        #b89f8d,
+        #c4ae9d,
+        #948272,
+        #e5d9cd,
+        #f0e6dc
+    );
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.exam {
+    width: 90%;
+    max-width: 1200px;
+    padding: 2rem;
+}
+
+.exam h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.exam_container1 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.exam_box1, .exam_box2, .exam_box3 {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.exam_box1:hover, .exam_box2:hover ,.exam_box3:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.exam_box1 h2, .exam_box2 h2 ,.exam_box3 h2{
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.exam_box1 p, .exam_box2 p ,.exam_box3 p{
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.exam-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.exam-btn:hover {
+    background-color: #2980b9;
+}.exam-btn a{
+    text-decoration: none;
+    color: white;
+}
