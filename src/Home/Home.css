@@ -201,3 +201,34 @@ html {
         filter: blur(3px);
     }
 }
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-icon {
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.profile-icon:hover {
+    color: #666;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    color: #666;
+    border-bottom: 1px solid #666;
+}

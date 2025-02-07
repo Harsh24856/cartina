@@ -11,11 +11,17 @@ const About = () => {
       <div className='section2'>
         <h1>About</h1>
         <p>Cartina is a platform that helps you generate roadmaps for your exams.</p>
-        <p>It is a platform that helps you generate roadmaps for your exams.</p>
-        <p>It is a platform that helps you generate roadmaps for your exams.</p>
+        <p>Our intelligent system analyzes your study patterns and creates personalized learning paths.</p>
+        <p>Key features of Cartina include:</p>
+        <ul>
+          <li>Personalized study schedules</li>
+          <li>Smart topic prioritization</li>
+          <li>Progress tracking</li>
+          <li>Resource recommendations</li>
+        </ul>
+       
       </div>
-      </div>
-      
+    </div>
   )
 }
 

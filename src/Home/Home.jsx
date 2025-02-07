@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
+import { useAuth } from '../context/AuthContext';
+import { FaUserCircle } from 'react-icons/fa';
 import './Home.css';
 import Exam from '../Side branches/Exam';
 import About from '../Side branches/About';
 import Contact from '../Side branches/Contact';
 
 const Home = () => {
+  const { isAuthenticated, logout } = useAuth();
+  
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -27,8 +31,17 @@ const Home = () => {
           </ul>
         </div>
         <div className='register'>
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Sign Up</Link>
+          {isAuthenticated ? (
+            <div className="profile-section">
+              <FaUserCircle size={30} className="profile-icon" />
+              <button onClick={logout} className="logout-btn">Logout</button>
+            </div>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/signup">Sign Up</Link>
+            </>
+          )}
         </div>
       </nav>
       
@@ -42,7 +55,7 @@ const Home = () => {
       }}>
         <div className='mid'>
           <h1>Generate Roadmap</h1>
-          <button><Link to='/start_page'>Get Started</Link></button>
+          <Link to='/start_page'><button>Get Started</button></Link>
         </div>
       </div>
       <div id="about" className='about'>

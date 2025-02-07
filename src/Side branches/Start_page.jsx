@@ -11,16 +11,20 @@ const Start_page = () => {
 
   
 
-  const handleSubmit = useEffect((e) => {
-   
-    axios.post('', formData)
-    .then(response => {
+  const handleSubmit = async (e) => {
+    e.preventDefault() 
+    try {
+      
+      const response = await axios.post('http://localhost:5000/api/submit-exam', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       console.log(response.data)
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('Error submitting form:', error)
-    })
-  },[formData])
+    }
+  }
 
   return (
     <div className="start-page">

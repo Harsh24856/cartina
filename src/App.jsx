@@ -7,23 +7,23 @@ import Exam from './Side branches/Exam'
 import Login from './Side branches/Login'
 import Signup from './Side branches/Signup'
 import Start_page from './Side branches/Start_page'
+import { AuthProvider } from './context/AuthContext'
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/exam" element={<Exam />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/start_page" element={<Start_page />} />
-      </Routes>
-    </BrowserRouter>
-
-    
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/exam" element={<Exam />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/start_page" element={<Start_page />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
