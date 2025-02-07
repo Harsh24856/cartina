@@ -9,8 +9,8 @@ const Start_page = () => {
   
   const [formData, setFormData] = useState({
     input: '',
-    date: '',
-    hours: '',
+    date: new Date().toISOString().split('T')[0],
+    hours: 9,
     class: ''
   })
 

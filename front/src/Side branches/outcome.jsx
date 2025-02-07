@@ -1,6 +1,7 @@
 import React from 'react'
 import './outcome.css'
 import { useLocation } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 
 const Outcome = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ const Outcome = () => {
             <h2>Exam Details</h2>
             <div className="flow-node">
               <strong>Exam</strong>
-              <p>{formData?.input || 'Not specified'}</p>
+              <p>{formData?.input.toUpperCase() || 'Not specified'}</p>
             </div>
             <div className="flow-node">
               <strong>Exam Date</strong>
@@ -38,14 +39,9 @@ const Outcome = () => {
             <h2>Your Roadmap to Success</h2>
             <div className="recommendation-content">
               {recommendations ? (
-                <pre style={{ 
-                  whiteSpace: 'pre-wrap', 
-                  fontFamily: 'inherit', 
-                  lineHeight: '1.6', 
-                  color: '#333' 
-                }}>
+                <ReactMarkdown>
                   {recommendations}
-                </pre>
+                </ReactMarkdown>
               ) : (
                 <p className="no-recommendations">
                   No recommendations available. Please try again.
