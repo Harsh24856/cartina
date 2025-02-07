@@ -1,6 +1,14 @@
 import React, { createContext, useState, useContext } from 'react';
 
-const AuthContext = createContext(null);
+// Create a default context value with empty functions and initial state
+const defaultContextValue = {
+  isAuthenticated: false,
+  user: null,
+  login: () => {},
+  logout: () => {}
+};
+
+const AuthContext = createContext(defaultContextValue);
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,11 +24,27 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const contextValue = {
+    isAuthenticated, 
+    user, 
+    login, 
+    logout
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  
+  // Add a check to prevent null context
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  
+  return context;
+}; 

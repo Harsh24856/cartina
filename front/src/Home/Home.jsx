@@ -48,7 +48,6 @@ const Home = () => {
       <div id="home" className='start' onMouseEnter={()=>{
         document.querySelector('.home_btn').style.backgroundColor = 'gray';
         document.querySelector('.home_btn').style.color = 'whitesmoke';
-        
       }} onMouseLeave={()=>{
         document.querySelector('.home_btn').style.backgroundColor = 'transparent';
         document.querySelector('.home_btn').style.color = 'rgb(135, 133, 133)';

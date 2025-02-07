@@ -17,6 +17,8 @@ const Start_page = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const API_KEY = import.meta.env.VITE_GOOGLE_GENERATIVE_AI_API_KEY;
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.input.trim()) {
@@ -77,8 +79,6 @@ const Start_page = () => {
   };
 
   const generateStudyRecommendations = async (examDetails) => {
-    const API_KEY = "AIzaSyBoCPi7w_a8l0znIKzFBDOCcCC8enqoVfc";
-    
     try {
       // Initialize the Google Generative AI
       const genAI = new GoogleGenerativeAI(API_KEY);
@@ -86,15 +86,27 @@ const Start_page = () => {
       // For text-only input, use the gemini-pro model
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-      const prompt = `Act as an expert academic advisor. Create a study plan for a student of ${examDetails.class} class preparing for ${examDetails.input} exam on ${examDetails.date} with ${examDetails.hours} hours available per day.
-      Format your response as:
-      1. All syllabus
-      2. divide syllabus into 3 parts
-      3. give youtube video links for each part in the format of "part number: youtube video link"
-      
+      const prompt = `Act as an expert academic advisor. Create a structured study plan for a student in ${examDetails.class} preparing for ${examDetails.input} exam on ${examDetails.date} with ${examDetails.hours} hours available per day.
 
-      Keep it concise and practical and in flowchart format.
-      `;
+Provide a detailed study flowchart with the following format:
+1. Week : [Main Focus Topics]
+   - Subtopic 1
+   - Subtopic 2
+2. Week : [Advanced Topics]
+   - Subtopic 1
+   - Subtopic 2
+3. Week : [Practice and Revision]
+   - Mock Tests
+   - Weak Area Improvement
+4. Final Week: [Exam Preparation Strategy]
+   - Last-minute revision tips
+   - Mental preparation techniques
+
+Ensure the plan is:
+- Tailored to the specific exam
+- Realistic given the study hours
+- Includes a mix of learning, practice, and revision
+- Provides clear, actionable daily/weekly goals`;
 
       // Generate content
       const result = await model.generateContent(prompt);
@@ -219,8 +231,8 @@ const Start_page = () => {
             <option value="">Select your class</option>
             <option value="11">11th Standard</option>
             <option value="12">12th Standard</option>
-            <option value="dropper">Dropper</option>
-            <option value="college">College</option>
+            <option value="Drop">Drop</option>
+            <option value="University">University</option>
           </select>
           {errors.class && <span className="error-message">{errors.class}</span>}
         </div>

@@ -4,7 +4,6 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa'
 
 const Contact = ({ name, github, linkedin }) => {
   return (
-
       <div className='contact'>
         <h2>{name}</h2>
         <a href={github} target="_blank" rel="noopener noreferrer" className="github-icon">
