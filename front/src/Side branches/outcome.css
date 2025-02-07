@@ -1,10 +1,20 @@
+/* Add beautiful background */
+.outcome-page-wrapper {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  margin: 0;
+}
+
 .outcome-container {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 2rem;
-  background: #ffffff;
+  background: transparent;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .outcome-header {
