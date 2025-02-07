@@ -88,20 +88,22 @@ const Start_page = () => {
 
       const prompt = `Act as an expert academic advisor. Create a structured study plan for a student in ${examDetails.class} preparing for ${examDetails.input} exam on ${examDetails.date} with ${examDetails.hours} hours available per day.
 
-Provide a detailed study flowchart with the following format:
-1. Week : [Main Focus Topics]
+Provide a detailed study plan with the following format:
+1. [Main Focus Topics]
    - Subtopic 1
    - Subtopic 2
-2. Week : [Advanced Topics]
+2.  [Advanced Topics]
    - Subtopic 1
    - Subtopic 2
-3. Week : [Practice and Revision]
+3.  [Practice and Revision]
    - Mock Tests
    - Weak Area Improvement
 4. Final Week: [Exam Preparation Strategy]
    - Last-minute revision tips
    - Mental preparation techniques
-
+5.give week distribution for the above topics
+6.give a detailed plan for each week
+7.give a detailed plan for each day like monday to saturday
 Ensure the plan is:
 - Tailored to the specific exam
 - Realistic given the study hours
