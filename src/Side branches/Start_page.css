@@ -34,7 +34,7 @@
     }
 
 .form {
-    height: 60vh;
+    height: 65vh;
     width: 500px;
     padding: 60px;
     background: rgba(255, 255, 255, 0.25);
@@ -45,12 +45,13 @@
     border-radius: 20px;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .form-group {
     margin-bottom: 1.5rem;
+
 }
 
 label {
@@ -102,6 +103,7 @@ button:active {
     position: absolute;
     top: 30%;
     left: 40%;
+    transform: translate(150px);
     animation: bounce 2s infinite;
 }
 @keyframes bounce {
@@ -117,5 +119,38 @@ button:active {
    
 }.form-group label{
     color: whitesmoke;
+}::placeholder{
+    color: whitesmoke;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+  background-color: rgba(255, 68, 68, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.submit-error {
+  margin-top: 10px;
+  text-align: center;
+  background-color: rgba(255, 68, 68, 0.2);
+  padding: 8px;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:invalid {
+  border-color: #ff4444;
 }
   

@@ -8,7 +8,7 @@ import Login from './Side branches/Login'
 import Signup from './Side branches/Signup'
 import Start_page from './Side branches/Start_page'
 import { AuthProvider } from './context/AuthContext'
-
+import Outcome from './Side branches/outcome'
 const App = () => {
   return (
     <AuthProvider>
@@ -21,6 +21,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/start_page" element={<Start_page />} />
+          <Route path="/outcome" element={<Outcome />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

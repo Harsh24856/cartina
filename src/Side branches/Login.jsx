@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
 import './Auth.css';
 
 const Login = () => {
@@ -13,21 +12,26 @@ const Login = () => {
   });
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', formData);
-      const { token, userId, name } = response.data;
+      // Get users from localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
       
-      localStorage.setItem('token', token);
+      // Find user with matching email and password
+      const user = users.find(u => u.email === formData.email && u.password === formData.password);
       
-      login({ userId, email: formData.email, name });
-     
-      navigate('/');
+      if (user) {
+        // Login successful
+        login({ userId: user.id, email: user.email, name: user.name });
+        navigate('/');
+      } else {
+        setError('Invalid email or password');
+      }
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed');
+      setError('Login failed');
       console.error('Error during login:', error);
     }
   };

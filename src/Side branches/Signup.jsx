@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './Auth.css';
 
 const Signup = () => {
@@ -13,7 +12,7 @@ const Signup = () => {
   });
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
 
@@ -24,19 +23,29 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/signup', {
+      // Check if user already exists
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      if (users.some(user => user.email === formData.email)) {
+        setError('User with this email already exists');
+        return;
+      }
+
+      // Create new user
+      const newUser = {
+        id: Date.now().toString(),
         name: formData.name,
         email: formData.email,
         password: formData.password
-      });
+      };
 
-      // Store token
-      localStorage.setItem('token', response.data.token);
+      // Add user to localStorage
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
 
       // Redirect to login page
       navigate('/login');
     } catch (error) {
-      setError(error.response?.data?.message || 'Signup failed');
+      setError('Signup failed');
       console.error('Error during signup:', error);
     }
   };
