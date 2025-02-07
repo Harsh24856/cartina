@@ -10,9 +10,10 @@ const Outcome = () => {
     <div className='outcome'>
       <h1>Your Study Plan</h1>
       <div className="exam-details">
-        <p><strong>Exam:</strong> {formData?.input}</p>
+        <p><strong>Exam:</strong> {formData?.input.toUpperCase()}</p>
         <p><strong>Date:</strong> {formData?.date}</p>
         <p><strong>Study Hours per Day:</strong> {formData?.hours}</p>
+        <p><strong>Class:</strong> {formData?.class}</p>
       </div>
       <div className="recommendations">
         <h2>Your Roadmap to Success</h2>
