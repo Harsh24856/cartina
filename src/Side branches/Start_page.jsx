@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './Start_page.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Start_page = () => {
   const navigate = useNavigate();
@@ -9,10 +10,11 @@ const Start_page = () => {
   const [formData, setFormData] = useState({
     input: '',
     date: '',
-    hours: 2
+    hours: ''
   })
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -70,6 +72,35 @@ const Start_page = () => {
     }
   };
 
+  const generateStudyRecommendations = async (examDetails) => {
+    const API_KEY = "AIzaSyAISL4uWO6fKjZcS1-Y8LVFj6oDPd0dNcc";
+    
+    try {
+      // Initialize the Google Generative AI
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      
+      // For text-only input, use the gemini-pro model
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+      const prompt = `Act as an expert academic advisor. Create a study plan for a student preparing for ${examDetails.input} exam on ${examDetails.date} with ${examDetails.hours} hours available per day.
+      Format your response as:
+      1. Daily Schedule
+      2. Key Focus Areas
+      3. Study Tips
+      Keep it concise and practical.`;
+
+      // Generate content
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      return text;
+    } catch (error) {
+      console.error('Error generating recommendations:', error);
+      throw new Error('Failed to generate study recommendations. Please try again.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -77,20 +108,40 @@ const Start_page = () => {
       return;
     }
     
+    setLoading(true);
+    
     try {
-      const response = await axios.post('http://localhost:5000/api/submit-exam', formData, {
+      // Generate study recommendations
+      const recommendations = await generateStudyRecommendations(formData);
+      
+      // Log the data being sent to backend
+      console.log('Sending data to backend:', formData);
+      
+      const response = await axios.post('http://localhost:3000/api/submit-exam', formData, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      console.log(response.data);
-      navigate('/outcome', { state: { formData } });
+      
+      console.log('Backend response:', response.data);
+      navigate('/outcome', { 
+        state: { 
+          formData,
+          recommendations 
+        } 
+      });
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
       setErrors(prev => ({
         ...prev,
-        submit: 'Failed to submit form. Please try again.'
+        submit: error.response?.data?.error || error.message || 'Failed to submit form. Please try again.'
       }));
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -131,20 +182,28 @@ const Start_page = () => {
 
         <div className="form-group">
           <label htmlFor="hours">Study Hours/Day:</label>
+          <div className='hours-display'>{formData.hours} hours</div>
           <input
-            type="number"
+            type="range"
             id="hours"
             name="hours"
+            className='hours-range'
             value={formData.hours}
-            onChange={handleHoursChange}
+            onChange={(e)=>{
+              setFormData({...formData, hours: e.target.value})
+            }}
             min="2"
             max="18"
-            placeholder='2-18 hours'
+            step="1"
+            style={{ width: '100%' }}
           />
           {errors.hours && <span className="error-message">{errors.hours}</span>}
         </div>
+        
 
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Processing...' : 'Submit'}
+        </button>
         {errors.submit && <span className="error-message submit-error">{errors.submit}</span>}
       </form>
     </div>
