@@ -22,6 +22,10 @@ const Profile = () => {
   const [roadmapProgress, setRoadmapProgress] = useState({});
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [savedRoadmaps, setSavedRoadmaps] = useState([]);
+  const [modifyTopics, setModifyTopics] = useState("");
+  const [selectedRoadmapId, setSelectedRoadmapId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -35,6 +39,24 @@ const Profile = () => {
       setRoadmapProgress(savedProgress);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    fetchSavedRoadmaps();
+  }, []);
+
+  const fetchSavedRoadmaps = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/get-profiles');
+      const data = await response.json();
+      if (data.success) {
+        setSavedRoadmaps(data.profiles);
+      } else {
+        console.error('Failed to fetch roadmaps:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching roadmaps:', error);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -157,6 +179,57 @@ const Profile = () => {
     return totalItems ? Math.round((completedItems / totalItems) * 100) : 0;
   };
 
+  const handleModifyRoadmap = async (roadmap) => {
+    if (!modifyTopics.trim()) {
+      alert("Please enter topics to modify the roadmap");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/modify-roadmap', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: roadmap.id,
+          originalRoadmap: roadmap.recommendations,
+          newTopics: modifyTopics,
+          technology: roadmap.title
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Update the roadmap in the state
+        const updatedRoadmaps = roadmaps.map(r => 
+          r.id === roadmap.id ? {...r, recommendations: data.modifiedRoadmap} : r
+        );
+        setRoadmaps(updatedRoadmaps);
+        
+        // Save to localStorage
+        const allRoadmaps = JSON.parse(localStorage.getItem('roadmaps') || '[]');
+        const updatedAllRoadmaps = allRoadmaps.map(r => 
+          r.id === roadmap.id ? {...r, recommendations: data.modifiedRoadmap} : r
+        );
+        localStorage.setItem('roadmaps', JSON.stringify(updatedAllRoadmaps));
+        
+        setModifyTopics("");
+        setSelectedRoadmapId(null);
+        alert('Roadmap successfully modified!');
+      } else {
+        alert('Failed to modify roadmap: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error modifying roadmap:', error);
+      alert('Failed to modify roadmap. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="profile-container">
       <div className="profile-header">
@@ -212,7 +285,51 @@ const Profile = () => {
               </div>
               <p>Exam: {roadmap.exam_name}</p>
               <p>Created: {new Date(roadmap.created_at).toLocaleDateString()}</p>
-              <button onClick={() => handleViewRoadmap(roadmap)}>View Details</button>
+              <div className="roadmap-buttons">
+                <button onClick={() => handleViewRoadmap(roadmap)}>View Details</button>
+                <button 
+                  className="modify-btn"
+                  onClick={() => setSelectedRoadmapId(roadmap.id)}
+                  disabled={isLoading}
+                >
+                  {isLoading && selectedRoadmapId === roadmap.id 
+                    ? 'Modifying...' 
+                    : 'Modify Roadmap'
+                  }
+                </button>
+              </div>
+
+              {/* Modification Form */}
+              {selectedRoadmapId === roadmap.id && (
+                <div className="modify-form">
+                  <textarea
+                    value={modifyTopics}
+                    onChange={(e) => setModifyTopics(e.target.value)}
+                    placeholder="Enter topics you want to add or focus more on..."
+                    rows={4}
+                    disabled={isLoading}
+                  />
+                  <div className="button-group">
+                    <button 
+                      onClick={() => handleModifyRoadmap(roadmap)}
+                      className="submit-modify-btn"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Submitting...' : 'Submit Modification'}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setSelectedRoadmapId(null);
+                        setModifyTopics("");
+                      }}
+                      className="cancel-btn"
+                      disabled={isLoading}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -382,6 +499,62 @@ const Profile = () => {
       {/* Save Feedback Message */}
       <div className={`save-feedback ${showSaveMessage ? 'show' : ''}`}>
         ✓ Progress saved successfully!
+      </div>
+
+      <h2>Your Saved Roadmaps</h2>
+      <div className="roadmaps-grid">
+        {savedRoadmaps.map((roadmap) => (
+          <div key={roadmap.id} className="roadmap-card">
+            <h3>{roadmap.technology}</h3>
+            <div className="roadmap-content">
+              <pre>{roadmap.roadmap}</pre>
+            </div>
+            
+            <div className="roadmap-actions">
+              <button 
+                className="modify-btn"
+                onClick={() => setSelectedRoadmapId(roadmap.id)}
+                disabled={isLoading}
+              >
+                {isLoading && selectedRoadmapId === roadmap.id 
+                  ? 'Modifying...' 
+                  : 'Modify Roadmap'
+                }
+              </button>
+            </div>
+
+            {selectedRoadmapId === roadmap.id && (
+              <div className="modify-form">
+                <textarea
+                  value={modifyTopics}
+                  onChange={(e) => setModifyTopics(e.target.value)}
+                  placeholder="Enter topics you want to add or focus more on..."
+                  rows={4}
+                  disabled={isLoading}
+                />
+                <div className="button-group">
+                  <button 
+                    onClick={() => handleModifyRoadmap(roadmap)}
+                    className="submit-modify-btn"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Submitting...' : 'Submit Modification'}
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setSelectedRoadmapId(null);
+                      setModifyTopics("");
+                    }}
+                    className="cancel-btn"
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
