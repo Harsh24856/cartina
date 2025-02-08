@@ -14,16 +14,75 @@ const Signup = () => {
     avatar: null
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [imageError, setImageError] = useState('');
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    setImageError('');
+
     if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError('Image size should be less than 5MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.match('image.*')) {
+        setImageError('Please select an image file');
+        return;
+      }
+
       const reader = new FileReader();
+      
       reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-        setFormData(prev => ({ ...prev, avatar: reader.result }));
+        // Create an image element to check dimensions
+        const img = new Image();
+        img.onload = () => {
+          // Resize image if it's too large
+          const maxWidth = 800;
+          const maxHeight = 800;
+          
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Calculate new dimensions
+            if (width > height) {
+              height = Math.round(height * maxWidth / width);
+              width = maxWidth;
+            } else {
+              width = Math.round(width * maxHeight / height);
+              height = maxHeight;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Draw resized image
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Convert to base64
+            const resizedImage = canvas.toDataURL(file.type);
+            setPreviewUrl(resizedImage);
+            setFormData(prev => ({ ...prev, avatar: resizedImage }));
+          } else {
+            setPreviewUrl(reader.result);
+            setFormData(prev => ({ ...prev, avatar: reader.result }));
+          }
+        };
+        img.src = reader.result;
       };
+
+      reader.onerror = () => {
+        setImageError('Error reading file');
+      };
+
       reader.readAsDataURL(file);
     }
   };
@@ -72,13 +131,16 @@ const Signup = () => {
       <div className="auth-container2">
         <h2>Create Account</h2>
         {error && <div className="error-message">{error}</div>}
-        <form  className='form' onSubmit={handleSubmit}>
+        <form className='form' onSubmit={handleSubmit}>
           <div className="avatar-upload">
-            <img 
-              src={previewUrl || '/default-avatar.png'} 
-              alt="Profile Preview" 
-              className="avatar-preview"
-            />
+            <div className="avatar-preview-container">
+              <img 
+                src={previewUrl || '/default-avatar.png'} 
+                alt="Profile Preview" 
+                className="avatar-preview"
+              />
+              {imageError && <div className="error-message">{imageError}</div>}
+            </div>
             <input
               type="file"
               accept="image/*"
@@ -89,6 +151,9 @@ const Signup = () => {
             <label htmlFor="avatar-input" className="avatar-label">
               Choose Profile Picture
             </label>
+            <div className="image-requirements">
+              Recommended: Square image, max 5MB
+            </div>
           </div>
 
           <div className="form-group">

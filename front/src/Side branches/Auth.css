@@ -106,8 +106,8 @@
 }
 
 .container4 {
-  height: 150vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -115,11 +115,12 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: absolute;
+  position: absolute;
   top: 0;
   left: 0;
   z-index: 100;
-  margin-top: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .error-message {
@@ -135,24 +136,34 @@
 }
 
 .avatar-upload {
-  margin: 25px 0;
-  width: 120px;
-  height: auto;
-  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
 }
 
 .avatar-preview {
   width: 120px;
   height: 120px;
   border-radius: 50%;
+  object-fit: cover;
   border: 3px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.avatar-preview:hover {
-  transform: scale(1.05);
-  border-color: rgba(255, 255, 255, 0.5);
+.avatar-preview-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
 }
 
 .avatar-input {
@@ -176,29 +187,24 @@
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
+
 .form{
-  
   margin: 0 auto;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.avatar-upload{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-}.avatar-upload img{
+
+.avatar-upload img{
   width: 100px;
   height: 100px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 10px;
-}.avatar-upload label{
+}
+
+.avatar-upload label{
   margin-top: 10px;
   padding: 8px 18px;
   background: rgba(255, 255, 255, 0.15);
@@ -208,8 +214,17 @@
   justify-content: center;
   text-align: center;
 }
+
 .form-group {
   width: 100%;
-}main{
+}
+
+.image-requirements {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+main{
   display: relative;
 }
