@@ -87,6 +87,7 @@ const Outcome = () => {
     setShowModal(false);
     setRoadmapName('');
     alert('Roadmap saved successfully!');
+    navigate('/');
   };
 
   return (

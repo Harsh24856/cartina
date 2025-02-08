@@ -94,7 +94,7 @@ const Start_page = () => {
       const prompt = `Act as an expert academic advisor. Create a structured study plan for a student in ${examDetails.class} preparing for ${examDetails.input} exam in ${remainingDays} days with ${examDetails.hours} hours available per day.
 
 Provide a detailed study plan with the following format:
-0. [Introduction]
+[Introduction]
     - syllabus
 1. [Main Focus Topics]
    - Subtopic 1

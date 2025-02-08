@@ -331,8 +331,8 @@ const Profile = () => {
           // If line is empty after cleaning, skip it
           if (!cleanedLine) return null;
 
-          // Check if it's a section header (ends with ':')
-          if (cleanedLine.endsWith(':')) {
+          // Skip section headers (ends with ':') and bold lines (starts with '*' or '**')
+          if (cleanedLine.endsWith(':') || cleanedLine.startsWith('*')) {
             return (
               <h4 key={index} className="section-header">
                 {cleanedLine}
@@ -340,25 +340,18 @@ const Profile = () => {
             );
           }
 
-          // Check if line contains any numbers
-          const hasNumbers = /\d/.test(cleanedLine);
-
-          // Regular topic item
+          // For all other lines (including numerical ones), render with checkbox
           return (
             <div key={index} className="topic-item">
-              {hasNumbers ? (
-                <span className="topic-text-no-checkbox">{cleanedLine}</span>
-              ) : (
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={roadmapProgress[selectedRoadmap?.id]?.[index] || false}
-                    onChange={() => handleCheckboxChange(selectedRoadmap?.id, index)}
-                  />
-                  <span className="checkbox-custom"></span>
-                  <span className="topic-text">{cleanedLine}</span>
-                </label>
-              )}
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={roadmapProgress[selectedRoadmap?.id]?.[index] || false}
+                  onChange={() => handleCheckboxChange(selectedRoadmap?.id, index)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="topic-text">{cleanedLine}</span>
+              </label>
             </div>
           );
         })}
