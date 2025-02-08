@@ -119,20 +119,20 @@ const Home = () => {
   linkedin='https://www.linkedin.com/in/harsh-sehra-223a81346/'
 /><Contact 
   name='Vedant Angra' 
-  github='https://github.com/Harsh24856' 
-  linkedin='https://www.linkedin.com/in/harsh-sehra-223a81346/'
+  github='https://github.com/Vedant1816' 
+  linkedin='https://www.linkedin.com/in/vedant-angra-470970312/'
 /><Contact 
   name='Ujjwal Dhawan' 
   github=': https://github.com/ujjwaldhawan' 
   linkedin='https://www.linkedin.com/in/ujjwal-dhawan-3a21a9325/'
 /><Contact 
   name='Pradyumnan Thakur' 
-  github='https://github.com/Harsh24856' 
-  linkedin='https://www.linkedin.com/in/harsh-sehra-223a81346/'
+  github='https://github.com/kriz-cell' 
+  linkedin=''
 /><Contact 
-  name='Satvik Verma' 
-  github='https://github.com/Harsh24856' 
-  linkedin='https://www.linkedin.com/in/harsh-sehra-223a81346/'
+  name='Uday Salhan' 
+  github='https://github.com/ch1mkin' 
+  linkedin='https://auctiongenie.in'
 />
       </div>
     </div>

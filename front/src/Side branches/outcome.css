@@ -1,6 +1,6 @@
 /* Add beautiful background */
 .outcome-page-wrapper {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: radial-gradient(circle at center, #c4c2c2 0%, #8f8e8e 50%, #000000 100%);
   min-height: 100vh;
   padding: 2rem 1rem;
   margin: 0;
@@ -25,7 +25,7 @@
 }
 
 .outcome-header h1 {
-  color: #2c3e50;
+  color: #b1b4b8;
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0;
@@ -161,25 +161,261 @@
   padding-left: 1em;
   margin: 1em 0;
   color: #666;
-} .markdown-content table {
+}
+
+.markdown-content table {
   width: 100%;
   border-collapse: collapse;
   margin: 1em 0;
-} .markdown-content table th, .markdown-content table td {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+}
+
+.markdown-content table th,
+.markdown-content table td {
   border: 1px solid #ddd;
-}.markdown-content p {
+  padding: 12px;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.markdown-content table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #ddd;
+  font-size: 1rem;
+  
+}
+
+.markdown-content table tr:nth-child(even) {
+  background-color: #f8f9fa;
+  font-size: 1rem;
+}
+
+.markdown-content table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.markdown-content p {
   color: #2c3e50;
   font-size: 1.2rem;
   font-weight: 400;
   margin: 0;
-} .markdown-content ul {
+}
+
+.markdown-content ul {
   color: #2c3e50;
   font-size: 1rem;
   font-weight: 400;
   margin: 0;
-} .markdown-content li{
+}
+
+.markdown-content li {
   color: #2c3e50;
   font-size: 1rem;
   font-weight: 400;
   margin: 0;
+}
+
+.exam-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.exam-details-table th,
+.exam-details-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.exam-details-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.exam-details-table td {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.exam-details-table tr:last-child td {
+  border-bottom: none;
+}
+
+.exam-details-table tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.recommendations-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.recommendations-table th,
+.recommendations-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.recommendations-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.recommendations-table td {
+  color: #2c3e50;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.recommendations-table tr:last-child td {
+  border-bottom: none;
+}
+
+.recommendations-table tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.recommendations-table td:first-child {
+  width: 60px;
+  text-align: center;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.study-timeline-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.study-timeline-table th,
+.study-timeline-table td {
+  padding: 1.2rem;
+  text-align: left;
+  border: 1px solid #e9ecef;
+}
+
+.study-timeline-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.study-timeline-table td {
+  color: #2c3e50;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.study-timeline-table tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.study-timeline-table td:first-child {
+  font-weight: 600;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+}
+
+.study-plan-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.study-plan-table th,
+.study-plan-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.study-plan-table th {
+  background-color: #f2f2f2;
+  color: #333;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.study-plan-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.study-plan-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.copy-button {
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.study-schedule {
+  margin-top: 2rem;
+}
+
+.study-schedule table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.study-schedule th,
+.study-schedule td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.study-schedule th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.study-schedule tr:nth-child(even) {
+  background-color: #f9f9f9;
 }

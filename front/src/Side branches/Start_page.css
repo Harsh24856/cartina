@@ -17,21 +17,29 @@
     right: 0;
     bottom: 0;
     z-index: -1;
-    width: 100%;
-    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
     filter: brightness(0.8) contrast(1.2);
-    }@media(min-aspect-ratio: 16/9){
-        .video-background{
-            width: 100%;
-            height: auto;
-        }
+}
+
+@media (min-aspect-ratio: 16/9) {
+    .video-background {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
-    @media(max-aspect-ratio: 16/9){
-        .video-background{
-            width: auto;
-            height: 100%;
-        }
+}
+
+@media (max-aspect-ratio: 16/9) {
+    .video-background {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
+}
 
 .form {
     height: 95%;

@@ -7,6 +7,24 @@ const Outcome = () => {
   const location = useLocation();
   const { formData, recommendations } = location.state || {};
   const remainingDays = Math.ceil((new Date(formData?.date) - new Date()) / (1000 * 60 * 60 * 24));
+  console.log(recommendations)
+
+  // Custom checkbox component
+  const CustomCheckbox = ({ checked }) => (
+    <span className="custom-checkbox">
+      {checked ? '[x]' : '[ ]'}
+    </span>
+  );
+
+  // New component to render markdown with custom checkboxes
+  const CustomMarkdownComponents = {
+    input: ({ node, ...props }) => {
+      if (node.properties.type === 'checkbox') {
+        return <CustomCheckbox checked={props.checked} />;
+      }
+      return <input {...props} />;
+    }
+  };
 
   return (
     <div className='outcome-page-wrapper'>
@@ -35,7 +53,7 @@ const Outcome = () => {
               <p>{formData?.class || 'Not specified'}</p>
             </div>
             <div className="flow-node">
-              <strong>Remaing days</strong>
+              <strong>Remaining days</strong>
               <p>{remainingDays || 'Not specified'}</p>
             </div>
           </div>
@@ -44,7 +62,10 @@ const Outcome = () => {
             <h2>Your Roadmap to Success</h2>
             <div className="recommendation-content">
               {recommendations ? (
-                <ReactMarkdown className="markdown-content">
+                <ReactMarkdown 
+                  className="markdown-content"
+                  components={CustomMarkdownComponents}
+                >
                   {recommendations}
                 </ReactMarkdown>
               ) : (

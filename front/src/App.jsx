@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './Home/Home'
 import About from './Side branches/About'
 import Contact from './Side branches/Contact'
@@ -11,22 +11,29 @@ import { AuthProvider } from './context/AuthContext'
 import Outcome from './Side branches/outcome'
 import ErrorBoundary from './components/ErrorBoundary'
 
+const router = createBrowserRouter(
+  [
+    { path: "/", element: <Home /> },
+    { path: "/about", element: <About /> },
+    { path: "/exam", element: <Exam /> },
+    { path: "/contact", element: <Contact /> },
+    { path: "/login", element: <Login /> },
+    { path: "/signup", element: <Signup /> },
+    { path: "/start_page", element: <Start_page /> },
+    { path: "/outcome", element: <Outcome /> },
+  ],
+  {
+    future: {
+      v7_relativeSplatPath: true
+    }
+  }
+)
+
 const App = () => {
   return (
     <AuthProvider>
       <ErrorBoundary>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/exam" element={<Exam />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/start_page" element={<Start_page />} />
-            <Route path="/outcome" element={<Outcome />} />
-          </Routes>
-        </BrowserRouter>
+        <RouterProvider router={router} />
       </ErrorBoundary>
     </AuthProvider>
   )

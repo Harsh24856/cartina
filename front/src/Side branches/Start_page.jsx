@@ -18,6 +18,10 @@ const Start_page = () => {
   const [loading, setLoading] = useState(false);
 
   const API_KEY = import.meta.env.VITE_GOOGLE_GENERATIVE_AI_API_KEY;
+  
+  // Add debugging
+  console.log('API Key exists:', !!API_KEY);
+  console.log('API Key length:', API_KEY ? API_KEY.length : 0);
 
   const validateForm = () => {
     const newErrors = {};
@@ -81,14 +85,17 @@ const Start_page = () => {
   const generateStudyRecommendations = async (examDetails) => {
     try {
       // Initialize the Google Generative AI
-      const genAI = new GoogleGenerativeAI(API_KEY);
+      const genAI = new GoogleGenerativeAI("AIzaSyAISL4uWO6fKjZcS1-Y8LVFj6oDPd0dNcc");
       
       // For text-only input, use the gemini-pro model
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const remainingDays = Math.ceil((new Date(examDetails.date) - new Date()) / (1000 * 60 * 60 * 24));
 
-      const prompt = `Act as an expert academic advisor. Create a structured study plan for a student in ${examDetails.class} preparing for ${examDetails.input} exam on ${examDetails.date} with ${examDetails.hours} hours available per day.
+      const prompt = `Act as an expert academic advisor. Create a structured study plan for a student in ${examDetails.class} preparing for ${examDetails.input} exam in ${remainingDays} days with ${examDetails.hours} hours available per day.
 
 Provide a detailed study plan with the following format:
+0. [Introduction]
+    - syllabus
 1. [Main Focus Topics]
    - Subtopic 1
    - Subtopic 2
@@ -96,19 +103,22 @@ Provide a detailed study plan with the following format:
    - Subtopic 1
    - Subtopic 2
 3.  [Practice and Revision]
-   - Mock Tests
+   - Mock Tests with  only clickable links
    - Weak Area Improvement
 4. Final Week: [Exam Preparation Strategy]
    - Last-minute revision tips
    - Mental preparation techniques
-5.give week distribution for the above topics
-6.give a detailed plan for each week
+
+6.divide it into section of days(like day1-17 and so on)
 7.give a detailed plan for each day like monday to saturday
 Ensure the plan is:
 - Tailored to the specific exam
 - Realistic given the study hours
 - Includes a mix of learning, practice, and revision
-- Provides clear, actionable daily/weekly goals`;
+- Provides clear, actionable daily/weekly goals in a detailed and log format also provide redirectable links (only add clickable links) always add links
+do not provide table format
+tranlste all the text into ${formData.language}
+also give check list with checkboxes for the topics`;
 
       // Generate content
       const result = await model.generateContent(prompt);
@@ -238,6 +248,38 @@ Ensure the plan is:
           </select>
           {errors.class && <span className="error-message">{errors.class}</span>}
         </div>
+        <div className="form-group">
+          <label htmlFor="language">Language:</label>
+          <select
+            id="language"
+            name="language"
+            className='class-select'
+            value={formData.language}
+            onChange={handleInputChange}
+          >
+            <option value="">Select your language</option>
+            <option value="Hindi">Hindi</option>
+            <option value="English">English</option>
+            <option value="Marathi">Marathi</option>
+            <option value="Gujrati">Gujrati</option>
+            <option value="Kannada">Kannada</option>
+            <option value="Telugu">Telugu</option>
+            <option value="Tamil">Tamil</option>
+            <option value="Kannada">Kannada</option>
+            <option value="Punjabi">Punjabi</option>
+            <option value="Urdu">Urdu</option>
+            <option value="Bengali">Bengali</option>
+            <option value="Odia">Odia</option>
+            <option value="Assamese">Assamese</option>
+            <option value="Nepali">Nepali</option>
+            <option value="Other">Other</option>
+            
+            
+          </select>
+          {errors.class && <span className="error-message">{errors.class}</span>}
+        </div>
+        
+       
         
 
         <button type="submit" disabled={loading}>
