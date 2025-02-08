@@ -15,25 +15,52 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-
-    try {
-      // Get users from localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      
-      // Find user with matching email and password
-      const user = users.find(u => u.email === formData.email && u.password === formData.password);
-      
-      if (user) {
-        // Login successful
-        login({ userId: user.id, email: user.email, name: user.name });
-        navigate('/');
-      } else {
-        setError('Invalid email or password');
-      }
-    } catch (error) {
-      setError('Login failed');
-      console.error('Error during login:', error);
+    
+    // Get users from local storage
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.email === formData.email && u.password === formData.password);
+    
+    if (user) {
+      // Store current user in local storage
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      login(user);
+      navigate('/');
+    } else {
+      setError('Invalid email or password');
     }
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    
+    // Get existing users
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    
+    // Check if user already exists
+    if (users.some(user => user.email === formData.email)) {
+      alert('Email already registered');
+      return;
+    }
+    
+    // Create new user
+    const newUser = {
+      id: Date.now().toString(),
+      email: formData.email,
+      password: formData.password,
+      name: '',
+      bio: '',
+      joinDate: new Date().toISOString(),
+      avatar: null
+    };
+    
+    // Add to users array
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // Log in the new user
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    login(newUser);
+    navigate('/');
   };
 
   const handleChange = (e) => {

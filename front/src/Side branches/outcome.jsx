@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './outcome.css'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 
 const Outcome = () => {
   const location = useLocation();
-  const { formData, recommendations } = location.state || {};
+  const navigate = useNavigate();
+  const { formData, recommendations, userProfile } = location.state || {};
+  const [showModal, setShowModal] = useState(false);
+  const [roadmapName, setRoadmapName] = useState('');
   const remainingDays = Math.ceil((new Date(formData?.date) - new Date()) / (1000 * 60 * 60 * 24));
   console.log(recommendations)
 
@@ -24,6 +27,54 @@ const Outcome = () => {
       }
       return <input {...props} />;
     }
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
+  const handleSaveClick = () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+      // Save current state to localStorage before redirecting
+      localStorage.setItem('pendingRoadmap', JSON.stringify({
+        formData,
+        recommendations
+      }));
+      navigate('/login');
+      return;
+    }
+    setShowModal(true);
+  };
+
+  const saveRoadmap = () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!roadmapName.trim()) {
+      alert('Please enter a name for your roadmap');
+      return;
+    }
+
+    const newRoadmap = {
+      id: Date.now().toString(),
+      userId: currentUser.id,
+      title: roadmapName,
+      exam_name: formData?.input,
+      exam_date: formData?.date,
+      study_hours: formData?.hours,
+      class_level: formData?.class,
+      recommendations: recommendations,
+      created_at: new Date().toISOString()
+    };
+
+    // Get existing roadmaps and add new one
+    const roadmaps = JSON.parse(localStorage.getItem('roadmaps') || '[]');
+    roadmaps.push(newRoadmap);
+    localStorage.setItem('roadmaps', JSON.stringify(roadmaps));
+
+    setShowModal(false);
+    setRoadmapName('');
+    alert('Roadmap saved successfully!');
   };
 
   return (
@@ -76,6 +127,39 @@ const Outcome = () => {
             </div>
           </div>
         </div>
+        <div className="action-buttons">
+          <div className="profile-image-container" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
+            <img 
+              src={userProfile?.avatar || '/default-avatar.png'} 
+              alt="Profile" 
+              className="profile-image"
+              title="Go to Profile"
+            />
+          </div>
+          <button className="save-roadmap-btn" onClick={handleSaveClick}>
+            Save Roadmap
+          </button>
+        </div>
+
+        {/* Save Roadmap Modal */}
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Save Roadmap</h2>
+              <input
+                type="text"
+                placeholder="Enter roadmap name"
+                value={roadmapName}
+                onChange={(e) => setRoadmapName(e.target.value)}
+                className="roadmap-name-input"
+              />
+              <div className="modal-buttons">
+                <button onClick={saveRoadmap}>Save</button>
+                <button onClick={() => setShowModal(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -118,3 +118,34 @@
   margin-bottom: 15px;
   text-align: center;
 }
+
+.avatar-upload {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.avatar-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 2px solid #3498db;
+}
+
+.avatar-input {
+  display: none;
+}
+
+.avatar-label {
+  padding: 0.5rem 1rem;
+  background-color: #3498db;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.avatar-label:hover {
+  background-color: #2980b9;
+}
