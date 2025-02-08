@@ -34,7 +34,7 @@ def get_profiles():
         
         # Fetch all saved roadmaps from the database
         cursor.execute('''
-            SELECT id, technology, roadmap 
+            SELECT id, technology, recommendations 
             FROM saved_roadmaps 
             ORDER BY id DESC
         ''')
@@ -44,7 +44,7 @@ def get_profiles():
             profiles.append({
                 'id': row['id'],
                 'technology': row['technology'],
-                'roadmap': row['roadmap']
+                'roadmap': row['recommendations']  # Map to 'roadmap' for frontend compatibility
             })
         
         conn.close()
@@ -65,36 +65,53 @@ def get_profiles():
 def modify_roadmap():
     try:
         data = request.json
-        original_roadmap = data['originalRoadmap']
-        new_topics = data['newTopics']
-        technology = data['technology']
-        roadmap_id = data.get('id')
+        print("Received data:", data)  # Debug log
+        
+        # Validate required fields
+        required_fields = ['id', 'updatedContent', 'technology', 'originalRoadmap']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    'success': False,
+                    'error': f'Missing required field: {field}'
+                }), 400
 
+        roadmap_id = data.get('id')
+        modification_request = data['updatedContent']
+        technology = data['technology']
+        existing_roadmap = data['originalRoadmap']
+
+        if not existing_roadmap:
+            return jsonify({
+                'success': False,
+                'error': 'Original roadmap content is empty'
+            }), 400
+
+        # Create a prompt for the AI to modify the existing roadmap
         prompt = f"""
-        I have a learning roadmap for {technology}:
-        {original_roadmap}
-        
-        I need to modify this roadmap to include or focus more on these topics:
-        {new_topics}
-        
-        Please provide an updated roadmap that incorporates these topics while maintaining the overall structure and flow.
-        The response should be well-formatted and easy to read.
+        Here is an existing learning roadmap for {technology}:
+
+        {existing_roadmap}
+
+        The user wants to modify this roadmap with the following request:
+        "{modification_request}"
+
+        Please update the existing roadmap based on this request. Keep the existing structure 
+        and content, but modify it according to the user's request. Return the complete 
+        modified roadmap while maintaining the same format.
+
+        Important:
+        - Keep all existing sections that aren't mentioned in the modification
+        - Only modify the relevant parts based on the user's request
+        - Maintain the same formatting and structure
+        - If adding new content, make it blend naturally with existing content
         """
 
+        print("Sending prompt to AI:", prompt)  # Debug log
         response = model.generate_content(prompt)
         modified_roadmap = response.text
-        
-        # Update the roadmap in the database
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('''
-            UPDATE saved_roadmaps 
-            SET roadmap = ? 
-            WHERE id = ?
-        ''', (modified_roadmap, roadmap_id))
-        conn.commit()
-        conn.close()
-        
+        print("Received AI response:", modified_roadmap)  # Debug log
+
         return jsonify({
             'success': True,
             'modifiedRoadmap': modified_roadmap
@@ -102,19 +119,22 @@ def modify_roadmap():
 
     except Exception as e:
         print(f"Error modifying roadmap: {str(e)}")
+        import traceback
+        traceback.print_exc()  # Print full error traceback
         return jsonify({
             'success': False,
             'error': str(e)
         }), 500
 
 if __name__ == '__main__':
-    # Create tables if they don't exist
+    # Drop the existing table and create it with the correct schema
     conn = get_db_connection()
+    conn.execute('DROP TABLE IF EXISTS saved_roadmaps')
     conn.execute('''
         CREATE TABLE IF NOT EXISTS saved_roadmaps (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             technology TEXT NOT NULL,
-            roadmap TEXT NOT NULL
+            recommendations TEXT NOT NULL
         )
     ''')
     conn.close()

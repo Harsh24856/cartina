@@ -9,8 +9,10 @@ const Header = () => {
   const location = useLocation();
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+      navigate('/');
+    }
   };
 
   // Only render header if we're on the home page

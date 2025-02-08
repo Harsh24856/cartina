@@ -22,6 +22,8 @@ const Profile = () => {
   const [roadmapProgress, setRoadmapProgress] = useState({});
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [roadmapToDelete, setRoadmapToDelete] = useState(null);
   const [savedRoadmaps, setSavedRoadmaps] = useState([]);
   const [modifyTopics, setModifyTopics] = useState("");
   const [selectedRoadmapId, setSelectedRoadmapId] = useState(null);
@@ -61,40 +63,71 @@ const Profile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5000000) { // 5MB limit
+        setError('File size too large. Please choose an image under 5MB.');
+        return;
+      }
+      
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        setError('Please select a valid image file (JPEG, PNG, or GIF).');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setNewAvatar(reader.result);
+        setError(''); // Clear any previous errors
+      };
+      reader.onerror = () => {
+        setError('Error reading file. Please try again.');
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleAvatarUpdate = () => {
-    // Get users from localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.id === currentUser.id);
+  const handleAvatarUpdate = async () => {
+    try {
+      setError('');
+      if (!newAvatar) {
+        setError('Please select an image first');
+        return;
+      }
 
-    if (!user || user.password !== password) {
-      setError('Invalid password');
-      return;
+      // Get users from localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      // Update avatar in users array
+      const updatedUsers = users.map(u => 
+        u.id === currentUser.id ? { ...u, avatar: newAvatar } : u
+      );
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+      // Update current user
+      const updatedUser = { ...currentUser, avatar: newAvatar };
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      login(updatedUser); // Update auth context
+
+      // Update userProfile state
+      setUserProfile(updatedUser);
+
+      // Reset state and close modal
+      setShowAvatarModal(false);
+      setNewAvatar(null);
+      setError('');
+
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.className = 'success-message';
+      successMessage.textContent = 'Profile picture updated successfully!';
+      document.body.appendChild(successMessage);
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
+      }, 3000);
+
+    } catch (error) {
+      setError('An error occurred while updating the profile picture');
     }
-
-    // Update avatar in users array
-    const updatedUsers = users.map(u => 
-      u.id === currentUser.id ? { ...u, avatar: newAvatar } : u
-    );
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-    // Update current user
-    const updatedUser = { ...currentUser, avatar: newAvatar };
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    login(updatedUser); // Update auth context
-
-    // Reset state
-    setShowAvatarModal(false);
-    setPassword('');
-    setNewAvatar(null);
-    setError('');
   };
 
   const handleViewRoadmap = (roadmap) => {
@@ -181,26 +214,31 @@ const Profile = () => {
 
   const handleModifyRoadmap = async (roadmap) => {
     if (!modifyTopics.trim()) {
-      alert("Please enter topics to modify the roadmap");
+      alert("Please enter your modification request");
       return;
     }
 
     setIsLoading(true);
     try {
+      // Log the data being sent to help debug
+      const requestData = {
+        id: roadmap.id,
+        updatedContent: modifyTopics,
+        technology: roadmap.title,
+        originalRoadmap: roadmap.recommendations // Make sure this exists
+      };
+      console.log('Sending modification request:', requestData);
+
       const response = await fetch('http://localhost:5000/modify-roadmap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: roadmap.id,
-          originalRoadmap: roadmap.recommendations,
-          newTopics: modifyTopics,
-          technology: roadmap.title
-        }),
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();
+      console.log('Received response:', data); // Log the response
       
       if (data.success) {
         // Update the roadmap in the state
@@ -218,16 +256,114 @@ const Profile = () => {
         
         setModifyTopics("");
         setSelectedRoadmapId(null);
-        alert('Roadmap successfully modified!');
+        alert('Roadmap successfully updated!');
       } else {
-        alert('Failed to modify roadmap: ' + data.error);
+        console.error('Error from server:', data.error);
+        alert('Failed to update roadmap: ' + data.error);
       }
     } catch (error) {
-      console.error('Error modifying roadmap:', error);
-      alert('Failed to modify roadmap. Please try again.');
+      console.error('Error updating roadmap:', error);
+      alert('Failed to update roadmap. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteClick = (roadmap) => {
+    setRoadmapToDelete(roadmap);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    try {
+      // Get all roadmaps from localStorage
+      const allRoadmaps = JSON.parse(localStorage.getItem('roadmaps') || '[]');
+      
+      // Filter out the roadmap to delete
+      const updatedRoadmaps = allRoadmaps.filter(r => r.id !== roadmapToDelete.id);
+      
+      // Update localStorage
+      localStorage.setItem('roadmaps', JSON.stringify(updatedRoadmaps));
+      
+      // Update state
+      setRoadmaps(updatedRoadmaps.filter(roadmap => roadmap.userId === currentUser.id));
+      
+      // Remove progress data for this roadmap
+      const progress = JSON.parse(localStorage.getItem(`progress_${currentUser.id}`) || '{}');
+      delete progress[roadmapToDelete.id];
+      localStorage.setItem(`progress_${currentUser.id}`, JSON.stringify(progress));
+      
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.className = 'success-message';
+      successMessage.textContent = 'Roadmap deleted successfully!';
+      document.body.appendChild(successMessage);
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
+      }, 3000);
+      
+    } catch (error) {
+      setError('An error occurred while deleting the roadmap');
+    } finally {
+      setShowDeleteConfirmation(false);
+      setRoadmapToDelete(null);
+    }
+  };
+
+  const renderRoadmapContent = (content) => {
+    if (!content) return null;
+
+    return (
+      <div className="roadmap-content">
+        {content.split('\n').map((line, index) => {
+          // Skip empty lines
+          if (!line.trim()) return null;
+
+          // Clean the line from all prefixes and special characters
+          let cleanedLine = line
+            .replace(/^[-*]\s*/, '')         // Remove dash or asterisk prefix
+            .replace(/^Day\s*\d+:?\s*/i, '') // Remove "Day X:" prefix
+            .replace(/^\{.*?\}\s*/, '')      // Remove curly braces and their content
+            .replace(/\[[\sx]\]\s*/, '')     // Remove checkbox brackets
+            .replace(/^\s*-\s*/, '')         // Remove any remaining dashes
+            .trim();
+
+          // If line is empty after cleaning, skip it
+          if (!cleanedLine) return null;
+
+          // Check if it's a section header (ends with ':')
+          if (cleanedLine.endsWith(':')) {
+            return (
+              <h4 key={index} className="section-header">
+                {cleanedLine}
+              </h4>
+            );
+          }
+
+          // Check if line contains any numbers
+          const hasNumbers = /\d/.test(cleanedLine);
+
+          // Regular topic item
+          return (
+            <div key={index} className="topic-item">
+              {hasNumbers ? (
+                <span className="topic-text-no-checkbox">{cleanedLine}</span>
+              ) : (
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={roadmapProgress[selectedRoadmap?.id]?.[index] || false}
+                    onChange={() => handleCheckboxChange(selectedRoadmap?.id, index)}
+                  />
+                  <span className="checkbox-custom"></span>
+                  <span className="topic-text">{cleanedLine}</span>
+                </label>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -302,12 +438,23 @@ const Profile = () => {
               {/* Modification Form */}
               {selectedRoadmapId === roadmap.id && (
                 <div className="modify-form">
+                  <div className="chat-interface">
+                    <p className="bot-message">
+                      How would you like to modify your roadmap? You can:
+                      <br/>- Add new topics
+                      <br/>- Remove topics
+                      <br/>- Change the order
+                      <br/>- Adjust difficulty level
+                      <br/>Just tell me what you'd like to change.
+                    </p>
+                  </div>
                   <textarea
                     value={modifyTopics}
                     onChange={(e) => setModifyTopics(e.target.value)}
-                    placeholder="Enter topics you want to add or focus more on..."
-                    rows={4}
+                    placeholder="Example: Add more practice exercises for arrays, or make the SQL section more advanced..."
+                    rows={3}
                     disabled={isLoading}
+                    className="chat-input"
                   />
                   <div className="button-group">
                     <button 
@@ -315,7 +462,7 @@ const Profile = () => {
                       className="submit-modify-btn"
                       disabled={isLoading}
                     >
-                      {isLoading ? 'Submitting...' : 'Submit Modification'}
+                      {isLoading ? 'Processing...' : 'Send'}
                     </button>
                     <button 
                       onClick={() => {
@@ -330,6 +477,20 @@ const Profile = () => {
                   </div>
                 </div>
               )}
+              <div className="roadmap-actions">
+                <button 
+                  className="view-btn"
+                  onClick={() => handleViewRoadmap(roadmap)}
+                >
+                  View Details
+                </button>
+                <button 
+                  className="delete-btn"
+                  onClick={() => handleDeleteClick(roadmap)}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -348,6 +509,9 @@ const Profile = () => {
                 alt="Preview" 
                 className="avatar-preview"
               />
+            </div>
+
+            <div className="avatar-selection-container">
               <input
                 type="file"
                 accept="image/*"
@@ -360,28 +524,17 @@ const Profile = () => {
               </label>
             </div>
 
-            <div className="password-confirm">
-              <input
-                type="password"
-                placeholder="Confirm your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="password-input"
-              />
-            </div>
-
             <div className="modal-buttons">
               <button 
                 onClick={handleAvatarUpdate}
                 className="save-btn"
-                disabled={!newAvatar || !password}
+                disabled={!newAvatar}
               >
                 Save Changes
               </button>
               <button 
                 onClick={() => {
                   setShowAvatarModal(false);
-                  setPassword('');
                   setNewAvatar(null);
                   setError('');
                 }}
@@ -433,38 +586,14 @@ const Profile = () => {
                     if (isSectionWithCheckboxes) {
                       return (
                         <div key={sectionIndex} className="subjects-section">
-                          {lines.map((line, lineIndex) => {
-                            if (line.includes(':') || line.includes('Checklist')) {
-                              // This is a section header
-                              return <h4 key={lineIndex}>{line.replace(':', '')}</h4>;
-                            } else if (line.includes('- [')) {
-                              // This is a checkbox item
-                              const itemText = line.replace(/- \[[x\s]?\]/i, '').trim();
-                              return (
-                                <div key={lineIndex} className="task-item">
-                                  <label className="checkbox-label">
-                                    <input
-                                      type="checkbox"
-                                      checked={roadmapProgress[selectedRoadmap.id]?.[lineIndex] || false}
-                                      onChange={() => handleCheckboxChange(selectedRoadmap.id, lineIndex)}
-                                    />
-                                    <span className="checkbox-custom"></span>
-                                    <span className="task-text">{itemText}</span>
-                                  </label>
-                                </div>
-                              );
-                            }
-                            return <p key={lineIndex} className="day-description">{line}</p>;
-                          })}
+                          {renderRoadmapContent(section)}
                         </div>
                       );
                     } else {
                       // For other sections, display as regular text
                       return (
                         <div key={sectionIndex} className="text-section">
-                          {lines.map((line, i) => (
-                            <p key={i} className="day-description">{line}</p>
-                          ))}
+                          {renderRoadmapContent(section)}
                         </div>
                       );
                     }
@@ -496,65 +625,37 @@ const Profile = () => {
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirmation && (
+        <div className="modal-overlay">
+          <div className="modal-content delete-modal">
+            <h2>Delete Roadmap</h2>
+            <p>Are you sure you want to delete "{roadmapToDelete?.title}"? This action cannot be undone.</p>
+            
+            <div className="modal-buttons">
+              <button 
+                onClick={handleDeleteConfirm}
+                className="delete-btn"
+              >
+                Delete
+              </button>
+              <button 
+                onClick={() => {
+                  setShowDeleteConfirmation(false);
+                  setRoadmapToDelete(null);
+                }}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Save Feedback Message */}
       <div className={`save-feedback ${showSaveMessage ? 'show' : ''}`}>
         ✓ Progress saved successfully!
-      </div>
-
-      <h2>Your Saved Roadmaps</h2>
-      <div className="roadmaps-grid">
-        {savedRoadmaps.map((roadmap) => (
-          <div key={roadmap.id} className="roadmap-card">
-            <h3>{roadmap.technology}</h3>
-            <div className="roadmap-content">
-              <pre>{roadmap.roadmap}</pre>
-            </div>
-            
-            <div className="roadmap-actions">
-              <button 
-                className="modify-btn"
-                onClick={() => setSelectedRoadmapId(roadmap.id)}
-                disabled={isLoading}
-              >
-                {isLoading && selectedRoadmapId === roadmap.id 
-                  ? 'Modifying...' 
-                  : 'Modify Roadmap'
-                }
-              </button>
-            </div>
-
-            {selectedRoadmapId === roadmap.id && (
-              <div className="modify-form">
-                <textarea
-                  value={modifyTopics}
-                  onChange={(e) => setModifyTopics(e.target.value)}
-                  placeholder="Enter topics you want to add or focus more on..."
-                  rows={4}
-                  disabled={isLoading}
-                />
-                <div className="button-group">
-                  <button 
-                    onClick={() => handleModifyRoadmap(roadmap)}
-                    className="submit-modify-btn"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Submitting...' : 'Submit Modification'}
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setSelectedRoadmapId(null);
-                      setModifyTopics("");
-                    }}
-                    className="cancel-btn"
-                    disabled={isLoading}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
       </div>
     </div>
   );
