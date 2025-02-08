@@ -72,7 +72,7 @@ const Signup = () => {
       <div className="auth-container2">
         <h2>Create Account</h2>
         {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleSubmit}>
+        <form  className='form' onSubmit={handleSubmit}>
           <div className="avatar-upload">
             <img 
               src={previewUrl || '/default-avatar.png'} 

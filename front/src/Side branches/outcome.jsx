@@ -33,10 +33,19 @@ const Outcome = () => {
     navigate('/profile');
   };
 
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  };
+
   const handleSaveClick = () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
-      // Save current state to localStorage before redirecting
       localStorage.setItem('pendingRoadmap', JSON.stringify({
         formData,
         recommendations
@@ -45,6 +54,9 @@ const Outcome = () => {
       return;
     }
     setShowModal(true);
+    setTimeout(() => {
+      scrollToSection('modal');
+    }, 100);
   };
 
   const saveRoadmap = () => {
@@ -143,7 +155,7 @@ const Outcome = () => {
 
         {/* Save Roadmap Modal */}
         {showModal && (
-          <div className="modal-overlay">
+          <div className="modal-overlay" id='modal'>
             <div className="modal-content">
               <h2>Save Roadmap</h2>
               <input

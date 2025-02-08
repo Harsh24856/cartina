@@ -1,105 +1,112 @@
-.auth-container1 {
-  width: 40%;
-  height: 90vh;
-  padding: 50px 50px 100px 50px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(135deg, #1a4a5e, #2d7a9c);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.auth-container2 {
-  width: 40%;
-  height: 70vh;
-  padding: 50px 50px 100px 50px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(135deg, #1a4a5e, #2d7a9c);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  
+.auth-container1, .auth-container2 {
+  width: 45vw;
+  max-width: 95%;
+  min-height: 520px;
+  padding: 35px 40px;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25),
+              0 5px 15px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(145deg, #1c5069, #2d7a9c);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
 }
 
-.auth-container1 h2 {
+.auth-container1::before, .auth-container2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    60deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.1)
+  );
+  transform: rotate(-15deg);
+  pointer-events: none;
+}
+
+.auth-container1 h2, .auth-container2 h2 {
   text-align: center;
   margin-bottom: 30px;
   color: whitesmoke;
-  
-}.auth-container2 h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: whitesmoke;
-  
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  position: relative;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #ffffff;
+  font-size: 14px;
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  font-size: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 15px;
   color: white;
   transition: all 0.3s ease;
-  border-color: #ffffff;
 }
 
 .form-group input:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-.auth-container1 button ,.auth-container2 button{
+.auth-container1 button, .auth-container2 button {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #2d7a9c, #1a4a5e);
+  padding: 14px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  margin-top: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.auth-container1 button:hover ,.auth-container2 button:hover {
-  background: linear-gradient(135deg, #1a4a5e, #2d7a9c);
+.auth-container1 button:hover, .auth-container2 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #3498db, #2573a7);
 }
 
-.auth-container1 p ,.auth-container2 p {
+.auth-container1 p, .auth-container2 p {
   text-align: center;
   margin-top: 16px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #ffffffcc;
 }
 
-.auth-container1 a ,.auth-container2 a {
+.auth-container1 a, .auth-container2 a {
   color: #6ab0ff;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.auth-container1 a:hover ,.auth-container2 a:hover {
+.auth-container1 a:hover, .auth-container2 a:hover {
   color: #ffffff;
   text-decoration: none;
-} 
-.container4{
-  
-  height: 100vh;
+}
+
+.container4 {
+  height: 150vh;
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -108,29 +115,44 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  display: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  margin-top: 0;
 }
 
 .error-message {
-  color: #ff0000;
-  background-color: #ffe6e6;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
+  color: #ff3b3b;
+  background: rgba(255, 59, 59, 0.1);
+  border: 1px solid rgba(255, 59, 59, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
   text-align: center;
+  font-size: 14px;
+  backdrop-filter: blur(5px);
 }
 
 .avatar-upload {
-  text-align: center;
-  margin-bottom: 1.5rem;
+  margin: 25px 0;
+  width: 120px;
+  height: auto;
+  position: relative;
 }
 
 .avatar-preview {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 1rem;
-  border: 2px solid #3498db;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.avatar-preview:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .avatar-input {
@@ -138,14 +160,56 @@
 }
 
 .avatar-label {
-  padding: 0.5rem 1rem;
-  background-color: #3498db;
+  margin-top: 12px;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  border-radius: 25px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .avatar-label:hover {
-  background-color: #2980b9;
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+.form{
+  
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.avatar-upload{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}.avatar-upload img{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}.avatar-upload label{
+  margin-top: 10px;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-radius: 25px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.form-group {
+  width: 100%;
+}main{
+  display: relative;
 }

@@ -20,30 +20,7 @@ const Home = () => {
   return (
     <div>
     <div className='container'>
-      <nav>
-        <div><h1>Cartina</h1></div>
-        <div className='nav_bar'>
-          <ul>
-            <li><a href="#" className='home_btn' onClick={() => scrollToSection('home') }>Home</a></li>
-            <li><a href="#exam" className='exam_btn' onClick={() => scrollToSection('exam')}>Courses</a></li>
-            <li><a href="#about-section" className='about_btn' onClick={() => scrollToSection('about')}>About</a></li> 
-            <li><a href="#contact" className='contact_btn' onClick={() => scrollToSection('contact')}>Contact</a></li>
-          </ul>
-        </div>
-        <div className='register'>
-          {isAuthenticated ? (
-            <div className="profile-section">
-              <FaUserCircle size={30} className="profile-icon" />
-              <button onClick={logout} className="logout-btn">Logout</button>
-            </div>
-          ) : (
-            <>
-              <Link to="/login">Login</Link>
-              <Link to="/signup">Sign Up</Link>
-            </>
-          )}
-        </div>
-      </nav>
+      
       
       <div id="home" className='start' onMouseEnter={()=>{
         document.querySelector('.home_btn').style.backgroundColor = 'gray';
