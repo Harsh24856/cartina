@@ -9,16 +9,23 @@ import sqlite3
 # Load environment variables
 load_dotenv()
 
-# Get API key from environment
+# Configure Google AI with your API key
 api_key = os.getenv('GOOGLE_API_KEY')
 if not api_key:
     raise ValueError("No Google API key found. Please set GOOGLE_API_KEY in .env file")
 
-app = Flask(__name__)
-CORS(app)
-
-# Configure Google AI with your API key
 genai.configure(api_key=api_key)
+
+app = Flask(__name__)
+# Configure CORS properly
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:5173"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
 model = genai.GenerativeModel('gemini-pro')
 
 def get_db_connection():
@@ -65,7 +72,7 @@ def get_profiles():
 def modify_roadmap():
     try:
         data = request.json
-        print("Received data:", data)  # Debug log
+        print("Received data:", data)
         
         # Validate required fields
         required_fields = ['id', 'updatedContent', 'technology', 'originalRoadmap']
@@ -81,36 +88,34 @@ def modify_roadmap():
         technology = data['technology']
         existing_roadmap = data['originalRoadmap']
 
-        if not existing_roadmap:
-            return jsonify({
-                'success': False,
-                'error': 'Original roadmap content is empty'
-            }), 400
-
-        # Create a prompt for the AI to modify the existing roadmap
         prompt = f"""
-        Here is an existing learning roadmap for {technology}:
+        I have a study roadmap for {technology}. The current roadmap is:
 
         {existing_roadmap}
 
-        The user wants to modify this roadmap with the following request:
-        "{modification_request}"
+        The user wants to modify it with this request:
+        {modification_request}
 
-        Please update the existing roadmap based on this request. Keep the existing structure 
-        and content, but modify it according to the user's request. Return the complete 
-        modified roadmap while maintaining the same format.
-
-        Important:
-        - Keep all existing sections that aren't mentioned in the modification
-        - Only modify the relevant parts based on the user's request
-        - Maintain the same formatting and structure
-        - If adding new content, make it blend naturally with existing content
+        Please provide an updated version of the roadmap that incorporates these changes.
+        Maintain the same format and structure as the original roadmap.
         """
 
-        print("Sending prompt to AI:", prompt)  # Debug log
         response = model.generate_content(prompt)
         modified_roadmap = response.text
-        print("Received AI response:", modified_roadmap)  # Debug log
+
+        # Save the modified roadmap to the database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update the recommendations column for the specific roadmap
+        cursor.execute('''
+            UPDATE saved_roadmaps 
+            SET recommendations = ? 
+            WHERE id = ?
+        ''', (modified_roadmap, roadmap_id))
+        
+        conn.commit()
+        conn.close()
 
         return jsonify({
             'success': True,
@@ -118,9 +123,9 @@ def modify_roadmap():
         })
 
     except Exception as e:
-        print(f"Error modifying roadmap: {str(e)}")
+        print(f"Error in modify_roadmap: {str(e)}")  # Debug log
         import traceback
-        traceback.print_exc()  # Print full error traceback
+        traceback.print_exc()  # Print full stack trace
         return jsonify({
             'success': False,
             'error': str(e)
@@ -139,5 +144,6 @@ if __name__ == '__main__':
     ''')
     conn.close()
     
-    app.run(debug=True)
+    # Update the host and port configuration
+    app.run(debug=True, port=5001)  # Changed from 5000 to 5001
  

@@ -1157,6 +1157,11 @@ input[type="checkbox"]:checked + .checkbox-custom::after {
   box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
 }
 
+.chat-input::placeholder {
+  color: black;
+  opacity: 1; /* Firefox requires this to show the custom color */
+}
+
 .modify-form {
   background-color: #f8f9fa;
   padding: 20px;

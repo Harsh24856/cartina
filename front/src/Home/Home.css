@@ -174,10 +174,10 @@ html {
     position: relative;
     overflow: hidden;
     
-}.des{
+}.des {
     height: 50vh;
     width: 100%;
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
     z-index: 0;
     position: absolute;
     top: 0;
@@ -185,7 +185,6 @@ html {
     right: 0;
     bottom: 0;
     animation: move 10s linear infinite;
-    
 }
 @keyframes move{
     0%{

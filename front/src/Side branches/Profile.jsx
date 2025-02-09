@@ -229,13 +229,18 @@ const Profile = () => {
       };
       console.log('Sending modification request:', requestData);
 
-      const response = await fetch('http://localhost:5000/modify-roadmap', {
+      const response = await fetch('http://localhost:5001/modify-roadmap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
 
       const data = await response.json();
       console.log('Received response:', data); // Log the response
@@ -262,8 +267,8 @@ const Profile = () => {
         alert('Failed to update roadmap: ' + data.error);
       }
     } catch (error) {
-      console.error('Error updating roadmap:', error);
-      alert('Failed to update roadmap. Please try again.');
+      console.error('Detailed error:', error);
+      alert('Failed to update roadmap. Error: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -331,6 +336,9 @@ const Profile = () => {
           // If line is empty after cleaning, skip it
           if (!cleanedLine) return null;
 
+          // Check if line starts with a number (including "1.", "1)", etc.)
+          const startsWithNumber = /^\d+[.)]\s*/.test(line);
+
           // Skip section headers (ends with ':') and bold lines (starts with '*' or '**')
           if (cleanedLine.endsWith(':') || cleanedLine.startsWith('*')) {
             return (
@@ -350,7 +358,9 @@ const Profile = () => {
                   onChange={() => handleCheckboxChange(selectedRoadmap?.id, index)}
                 />
                 <span className="checkbox-custom"></span>
-                <span className="topic-text">{cleanedLine}</span>
+                <span className="topic-text">
+                  {startsWithNumber ? line : cleanedLine}
+                </span>
               </label>
             </div>
           );
@@ -448,6 +458,7 @@ const Profile = () => {
                     rows={3}
                     disabled={isLoading}
                     className="chat-input"
+                    style={{ '::placeholder': { color: 'black' } }}
                   />
                   <div className="button-group">
                     <button 
@@ -471,12 +482,6 @@ const Profile = () => {
                 </div>
               )}
               <div className="roadmap-actions">
-                <button 
-                  className="view-btn"
-                  onClick={() => handleViewRoadmap(roadmap)}
-                >
-                  View Details
-                </button>
                 <button 
                   className="delete-btn"
                   onClick={() => handleDeleteClick(roadmap)}

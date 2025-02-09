@@ -6,11 +6,11 @@
     width: 100%;
     background: linear-gradient(
         45deg,
-        #b89f8d,
-        #c4ae9d,
-        #948272,
-        #e5d9cd,
-        #f0e6dc
+        #DEB887,
+        #984c29,
+        #964b15,
+        #CD853F,
+        #DEB887
     );
     background-size: 400% 400%;
     animation: gradientBG 10s ease infinite;
